@@ -3,19 +3,53 @@ import { StyleSheet, TouchableOpacity, Platform, Text, View, TextInput, Image } 
 import { LinearGradient } from 'expo-linear-gradient';
 import fondo from './native.webp'
 import ButtonGradient from './ButtonGradient';
+import { app } from './db';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { useState } from 'react';
+
 
 
 export default function App() {
+  const [email,setEmail]=useState()
+  const [password,setPassword]=useState()
+
+  const login = () => {
+    const auth = getAuth()
+    console.log('hola')
+    signInWithEmailAndPassword(auth, email, password).then(
+      (resp) => {
+        const user = resp.user;
+        console.log(user);
+  
+      }).catch(
+        (err) => {
+          const errorCode = err.code;
+          const errMessage = err;
+          console.log(errMessage);
+        }
+      )
+  }
+
+  
+
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
         <Image style={styles.contianerSvg} source={fondo} />
         <Text style={styles.titulo}>Hello</Text>
         <Text style={styles.subTitle}>Sigin in to your account</Text>
-        <TextInput style={styles.textInput} placeholder='Enter your email' />
-        <TextInput secureTextEntry style={styles.textInput} placeholder='Password' />
+        <TextInput
+          style={styles.textInput} placeholder='Enter your email'
+          onChangeText={setEmail}
+          
+        />
+        <TextInput 
+        secureTextEntry style={styles.textInput} placeholder='Password'
+        onChangeText={setPassword}        
+        />
         <Text style={styles.forgotPassword}>Forgot your password</Text>
-        <ButtonGradient />
+        <ButtonGradient onPress={() => login()} />
         <Text style={styles.forgotPassword}>Don't have an account</Text>
         <StatusBar style="auto" />
       </View>
